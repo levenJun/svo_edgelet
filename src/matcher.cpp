@@ -139,7 +139,7 @@ void warpAffine(
     const int level_ref,
     const int search_level,
     const int halfpatch_size,
-    uint8_t* patch)
+    uint8_t* patch) //仿射变换A,将cur的patch块变换到ref得到ref块,这里只取ref块的光度值=patch
 {
   const int patch_size = halfpatch_size*2 ;
   const Matrix2f A_ref_cur = A_cur_ref.inverse().cast<float>();
@@ -224,7 +224,7 @@ bool Matcher::findMatchDirect(
       cur_frame.T_f_w_ * ref_ftr_->frame->T_f_w_.inverse(), ref_ftr_->level, A_cur_ref_);
   search_level_ = warp::getBestSearchLevel(A_cur_ref_, Config::nPyrLevels()-1);
   warp::warpAffine(A_cur_ref_, ref_ftr_->frame->img_pyr_[ref_ftr_->level], ref_ftr_->px,
-                   ref_ftr_->level, search_level_, halfpatch_size_+1, patch_with_border_);
+                   ref_ftr_->level, search_level_, halfpatch_size_+1, patch_with_border_);//patch_with_border_:cur块仿射变换的ref块,ref块对应的光度集
   createPatchFromPatchWithBorder();
 
   // px_cur should be set
